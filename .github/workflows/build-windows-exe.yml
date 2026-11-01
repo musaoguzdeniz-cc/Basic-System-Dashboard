@@ -1,12 +1,15 @@
-name: Build Windows EXE
+name: Build Windows Rust EXE
 
 on:
   push:
     branches: [main]
     paths:
-      - "main.py"
-      - "requirements.txt"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "src/**"
       - ".github/workflows/build-windows-exe.yml"
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -14,44 +17,29 @@ permissions:
 
 jobs:
   build:
-    runs-on: windows-latest
-
+    runs-on: windows-2025
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install dependencies
-        shell: pwsh
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt
-          python -m pip install pyinstaller
+      - name: Check Rust source
+        run: cargo check --locked
 
       - name: Build executable
-        shell: pwsh
-        run: |
-          pyinstaller --noconsole --onefile --name SystemResourceWidget main.py
+        run: cargo build --release --locked
 
       - name: Upload executable artifact
         uses: actions/upload-artifact@v4
         with:
-          name: SystemResourceWidget-Windows
-          path: dist/SystemResourceWidget.exe
+          name: SystemResourceWidget-Windows-Rust
+          path: target/release/SystemResourceWidget.exe
 
-      - name: Copy executable into repository release folder
+      - name: Update executable in release folder
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path release | Out-Null
-          Copy-Item dist/SystemResourceWidget.exe release/SystemResourceWidget.exe -Force
-
-      - name: Commit executable
-        shell: pwsh
-        run: |
+          Copy-Item target/release/SystemResourceWidget.exe release/SystemResourceWidget.exe -Force
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add release/SystemResourceWidget.exe
@@ -59,5 +47,5 @@ jobs:
             Write-Host "Executable is unchanged."
             exit 0
           }
-          git commit -m "Build Windows executable"
+          git commit -m "Build Rust Windows executable"
           git push

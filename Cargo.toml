@@ -1,0 +1,18 @@
+[package]
+name = "basic-system-dashboard"
+version = "0.2.0"
+edition = "2024"
+license = "MIT"
+description = "Compact Windows CPU and RAM widget"
+
+[[bin]]
+name = "SystemResourceWidget"
+path = "src/main.rs"
+
+[dependencies]
+eframe = { version = "0.37.0", default-features = false, features = ["default_fonts", "glow"] }
+sysinfo = "0.40.1"
+
+[profile.release]
+strip = true
+lto = "thin"
