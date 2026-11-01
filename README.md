@@ -24,7 +24,7 @@ cargo build --release --locked
 .\target\release\SystemResourceWidget.exe
 ```
 
-Windows 10/11 x64 ve Rust stable gerekir. Kaynak dosya `src/main.rs`, bağımlılıklar `Cargo.toml` içindedir. Eski Python sürümü geçiş dönemi için depoda tutulmuştur; uygulamanın ana derleme yolu Rust'tır.
+Windows 10/11 x64 ve Rust stable gerekir. Kaynak dosya `src/main.rs`, bağımlılıklar `Cargo.toml` içindedir. Önceki Python sürümü Git geçmişinde korunur.
 
 ## English
 
@@ -33,3 +33,4 @@ Basic System Dashboard is a compact, always-on-top **Rust** widget for Windows. 
 ## License
 
 [MIT](LICENSE)
+
